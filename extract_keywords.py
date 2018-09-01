@@ -87,6 +87,8 @@ class KeywordsModel(object):
             ret_keywords += title.split()
 
         debug_print("Final_ret_keywords: " + " ".join(ret_keywords))
+        if "," in ret_keywords:
+            return ret_keywords[:1]
         return ret_keywords[:2]
 
 

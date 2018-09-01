@@ -11,21 +11,21 @@ class RuleUtil(object):
 
     @classmethod
     def process_text(cls, text):
-        if not (u"·" in text and u"《" in text and u"》" in text):
+        if not (u"《" in text and u"》" in text):
             return text
 
         new_tokens = []
         uniq_s = ""
         for s in quote_pattern.findall(text):
-            if u"·" in text:
-                s = s.replace(" ", "")
-                new_tokens.append(s)
-                uniq_s += s
+            s = s.replace(" ", "")
+            new_tokens.append(u"《" + " " + s + " " + u"》")
+            uniq_s += s
         for token in text.split():
-            if token not in uniq_s and token != u"《" and token != u"》":
+            if token not in uniq_s:
                 new_tokens.append(token)
         new_text = " ".join(new_tokens)
         print ("new_text: %s" % new_text).encode("utf-8")
+
         return new_text 
 
 
