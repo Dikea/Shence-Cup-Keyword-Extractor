@@ -1,10 +1,14 @@
 #-*- coding: utf-8 -*-
 
 
+import re
 import codecs
 import jieba
 from pyhanlp import *
 import config
+
+
+quote_pattern = re.compile(ur"《(.*?)》")
 
 
 class NlpUtil(object):
@@ -17,8 +21,9 @@ class NlpUtil(object):
     CustomDictionary = JClass("com.hankcs.hanlp.dictionary.CustomDictionary")
     for w in customer_words:
         jieba.add_word(w, freq = 1000000)
-        CustomDictionary.add(w)
+        #CustomDictionary.add(w)
     print ("Load customer dict done.")
+    name_segment = HanLP.newSegment().enableNameRecognize(True)
     
 
     @classmethod
@@ -29,5 +34,20 @@ class NlpUtil(object):
             tokens = [term.word for term in HanLP.segment(text)]
         return tokens
 
+
+    @classmethod
+    def name_recognize(cls, text):
+        term_list = cls.name_segment.seg(text)
+        names = [t.word for t in list(term_list) if str(t.nature) == "nr"]
+        return set(names)
+
+
+    @classmethod
+    def extract_quotes(cls, text):
+        quotes = quote_pattern.findall(text)
+        return set(quotes)
+
+
 if __name__ == "__main__":
-    print " ".join((NlpUtil.word_tokenize(u"你说爸爸去哪儿呢")))
+    print " ".join((NlpUtil.word_tokenize(u"你说爸爸去哪儿呢", False)))
+    print " ".join(NlpUtil.name_recognize(u"杨超越出演那年花开月正圆"))

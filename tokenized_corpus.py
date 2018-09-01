@@ -17,7 +17,6 @@ with codecs.open(config.all_docs, "r", "utf-8") as rfd, \
             idx, title, content = info
             title = " ".join(NlpUtil.word_tokenize(title))
             content = " ".join(NlpUtil.word_tokenize(content))
-            wfd.write("%s\t%s\t%s\n" % (idx, title, content))
+            wfd.write("%s\t%s\t%s&&&&\n" % (idx, title, content))
         except Exception as e:
             print ("line=%s, errmsg=%s" % (line, e)).encode("utf-8")
-

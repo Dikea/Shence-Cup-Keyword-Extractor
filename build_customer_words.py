@@ -17,7 +17,7 @@ with codecs.open(config.train_docs, "r", "utf-8") as rfd:
 
 
 # Read N-gram.
-for i in range(3, 6):
+for i in range(3, 4):
     file_name = os.path.join("conf", "result.%dgram" % i)
     with codecs.open(file_name, "r", "utf-8") as rfd:
         for line in rfd:
@@ -33,9 +33,6 @@ with codecs.open(config.all_docs, "r", "utf-8") as rfd:
     for line in data:
         entities = entity_pattern.findall(line)
         customer_words_set.update(entities)
-        for w in entities:
-            print w.encode("utf-8")
-     
 
 
 with codecs.open(config.customer_words_path, "w", "utf-8") as wfd:
