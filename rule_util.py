@@ -1,8 +1,33 @@
 #-*- coding: utf-8 -*-
 
 
+import re
+
+
+quote_pattern = re.compile(ur"《(.*?)》")
+
 
 class RuleUtil(object):
+
+    @classmethod
+    def process_text(cls, text):
+        if not (u"·" in text and u"《" in text and u"》" in text):
+            return text
+
+        new_tokens = []
+        uniq_s = ""
+        for s in quote_pattern.findall(text):
+            if u"·" in text:
+                s = s.replace(" ", "")
+                new_tokens.append(s)
+                uniq_s += s
+        for token in text.split():
+            if token not in uniq_s and token != u"《" and token != u"》":
+                new_tokens.append(token)
+        new_text = " ".join(new_tokens)
+        print ("new_text: %s" % new_text).encode("utf-8")
+        return new_text 
+
 
     @classmethod
     def add_to_keywords(cls, title, keywords, words_set, once_flag=False):
@@ -20,21 +45,27 @@ class RuleUtil(object):
         tokens = title.split()
         if "·" in tokens and len(names) >= 2:
             names_len = len(names)
+            new_name = ""
             for i in range(names_len):
+                if new_name:
+                    break
                 for j in range(names_len):
-                    new_name = names[i] + "·" + names[j]
-                    if new_name in raw_title:
-                        debug_print("new_name: " + new_name)
+                    name = names[i] + "·" + names[j]
+                    if name in raw_title:
+                        new_name = name
+                        print("new_name: " + new_name)
                         break
-            keywords.append(new_name)
-            if i == names_len:
-                return
-            new_tokens = [new_name]
-            for token in title:
-                if token not in new_name:
-                    new_tokens.append(token)
-            new_title = " ".join(new_tokens)
-            print("new_title: %s" % new_title).encode("utf-8")
-            return new_title, keywords
-        else:
-            return title, keywords
+            if new_name:
+                keywords.append(new_name)
+                new_tokens = [new_name]
+                for token in title.split():
+                    if token not in new_name:
+                        new_tokens.append(token)
+                new_title = " ".join(new_tokens)
+                print("new_title: %s" % new_title).encode("utf-8")
+                return new_title, keywords
+        return title, keywords
+
+
+if __name__ == "__main__":
+    print RuleUtil.process_text(u"《 你 好 · 呀 》")

@@ -58,7 +58,8 @@ class KeywordsModel(object):
             debug_print("train_answer: " + " ".join(self.id2keywords[idx]))
 
         ret_keywords = []
-
+        title = RuleUtil.process_text(title) 
+        content = RuleUtil.process_text(content)
         quotes = NlpUtil.extract_quotes((title + content).replace(" ", ""))
         names = NlpUtil.name_recognize(title.replace(" ", "")) 
 

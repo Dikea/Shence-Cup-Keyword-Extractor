@@ -39,13 +39,13 @@ class NlpUtil(object):
     def name_recognize(cls, text):
         term_list = cls.name_segment.seg(text)
         names = [t.word for t in list(term_list) if str(t.nature) == "nr"]
-        return set(names)
+        return list(set(names))
 
 
     @classmethod
     def extract_quotes(cls, text):
         quotes = quote_pattern.findall(text)
-        return set(quotes)
+        return list(set(quotes))
 
 
 if __name__ == "__main__":

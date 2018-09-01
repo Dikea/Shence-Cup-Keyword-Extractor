@@ -106,3 +106,6 @@ venv.bak/
 dataset
 conf
 result
+result.*
+test
+submit_file
