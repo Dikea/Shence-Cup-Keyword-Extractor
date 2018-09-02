@@ -19,7 +19,7 @@ class RuleUtil(object):
         for s in quote_pattern.findall(text):
             s = s.replace(" ", "")
             new_tokens.append(u"《" + " " + s + " " + u"》")
-            uniq_s += s
+            uniq_s += s + u"《" + u"》"
         for token in text.split():
             if token not in uniq_s:
                 new_tokens.append(token)
@@ -36,6 +36,14 @@ class RuleUtil(object):
                 keywords.append(token)
                 if once_flag:
                     return keywords
+        """
+        keywords_str = "".join(keywords)
+        for token in words_set:
+            if token not in keywords_str:
+                keywords.append(token)
+                if once_flag:
+                    break
+        """
         return keywords
 
 

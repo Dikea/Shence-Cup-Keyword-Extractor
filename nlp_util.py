@@ -4,6 +4,7 @@
 import re
 import codecs
 import jieba
+import jieba.analyse
 from pyhanlp import *
 import config
 
@@ -23,8 +24,10 @@ class NlpUtil(object):
         jieba.add_word(w, freq = 1000000)
         #CustomDictionary.add(w)
     print ("Load customer dict done.")
-    name_segment = HanLP.newSegment().enableNameRecognize(True)
-    
+    ch_name_segment = HanLP.newSegment().enableNameRecognize(True)
+    ja_name_segment = HanLP.newSegment().enableJapaneseNameRecognize(True)
+    fr_name_segment = HanLP.newSegment().enableTranslatedNameRecognize(True)
+
 
     @classmethod
     def word_tokenize(cls, text, use_jieba=True):
@@ -37,17 +40,29 @@ class NlpUtil(object):
 
     @classmethod
     def name_recognize(cls, text):
-        term_list = cls.name_segment.seg(text)
-        names = [t.word for t in list(term_list) if str(t.nature) == "nr"]
-        return list(set(names))
+        text = text.replace(" ", "")
+        ch_names = [t.word for t in list(cls.ch_name_segment.seg(text)) if "nr" in str(t.nature)]
+        fr_names = [t.word for t in list(cls.fr_name_segment.seg(text)) if "nr" in str(t.nature)]
+        fr_names = [w for w in fr_names if u"·" in w]
+        fr_str = "".join(fr_names)
+        ch_names = [w for w in ch_names if w not in fr_str]
+        names = list(set(ch_names + fr_names))
+        return names
 
 
     @classmethod
     def extract_quotes(cls, text):
-        quotes = quote_pattern.findall(text)
+        quotes = quote_pattern.findall(text.replace(" ", ""))
         return list(set(quotes))
+
+
+    @classmethod
+    def text_rank(cls, text):
+        keywords = jieba.analyse.textrank(text, topK=5, 
+            withWeight=False, allowPOS=('ns', 'n', 'vn', 'v'))
+        return keywords
 
 
 if __name__ == "__main__":
     print " ".join((NlpUtil.word_tokenize(u"你说爸爸去哪儿呢", False)))
-    print " ".join(NlpUtil.name_recognize(u"杨超越出演那年花开月正圆"))
+    print " ".join(NlpUtil.name_recognize(u"新亘结衣加盟迪士尼新片《丛林巡航》"))

@@ -58,24 +58,25 @@ class KeywordsModel(object):
             debug_print("train_answer: " + " ".join(self.id2keywords[idx]))
 
         ret_keywords = []
-        title = RuleUtil.process_text(title) 
-        content = RuleUtil.process_text(content)
-        quotes = NlpUtil.extract_quotes((title + content).replace(" ", ""))
-        names = NlpUtil.name_recognize(title.replace(" ", "")) 
+        #title = RuleUtil.process_text(title) 
+        #content = RuleUtil.process_text(content)
+
+        quotes = NlpUtil.extract_quotes(title)
+        names = NlpUtil.name_recognize(title) 
 
         debug_print("quotes:" + " ".join(quotes))
         debug_print("names:" + " ".join(names))
 
         ret_keywords = RuleUtil.add_to_keywords(title, 
             ret_keywords, quotes, once_flag=True)
-        debug_print("ret_keywords: " + " ".join(ret_keywords))
+        debug_print("after quotes, ret_keywords: " + " ".join(ret_keywords))
 
         title, ret_keywords = RuleUtil.recognize_foreign_names(
             title, names, ret_keywords)
 
         ret_keywords = RuleUtil.add_to_keywords(title,
             ret_keywords, names, once_flag=False)
-        debug_print("ret_keywords: " + " ".join(ret_keywords))
+        debug_print("after names, ret_keywords: " + " ".join(ret_keywords))
 
         tfidf_keywords = self.tfidf_inst.get_keywords(title, content)
         debug_print("tfidf_keywords: " + " ".join(tfidf_keywords))
@@ -86,9 +87,8 @@ class KeywordsModel(object):
         if len(ret_keywords) < 2:
             ret_keywords += title.split()
 
+        ret_keywords = [w for w in ret_keywords if "," not in w]
         debug_print("Final_ret_keywords: " + " ".join(ret_keywords))
-        if "," in ret_keywords:
-            return ret_keywords[:1]
         return ret_keywords[:2]
 
 

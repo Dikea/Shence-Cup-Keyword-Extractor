@@ -37,5 +37,5 @@ with codecs.open(config.all_docs, "r", "utf-8") as rfd:
 
 with codecs.open(config.customer_words_path, "w", "utf-8") as wfd:
     for word in customer_words_set:
-        if word:
+        if len(word) > 1:
             wfd.write("%s\n" % word)
