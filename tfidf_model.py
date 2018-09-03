@@ -23,7 +23,9 @@ class TfidfModel(object):
         tfidf = self.model[bow]
         keywords = [(self.dictionary[idx], value) for idx, value in tfidf]
         keywords.sort(key=lambda x: x[1], reverse=True)
-        keywords = [w for w, v in keywords if len(w) >= 2 and w in t_tokens]
+        keywords = [(w, v) for w, v in keywords if len(w) >= 2 and w in t_tokens]
+        print  ("raw_tfidf:" + " ".join("%s_%.2f" % (w, v) for w, v in keywords)).encode("utf-8")
+        keywords = [w for w, _ in keywords]
         return keywords
 
 

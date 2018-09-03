@@ -5,6 +5,7 @@ import re
 import codecs
 import jieba
 import jieba.analyse
+from gensim import summarization
 from pyhanlp import *
 import config
 
@@ -27,6 +28,7 @@ class NlpUtil(object):
     ch_name_segment = HanLP.newSegment().enableNameRecognize(True)
     ja_name_segment = HanLP.newSegment().enableJapaneseNameRecognize(True)
     fr_name_segment = HanLP.newSegment().enableTranslatedNameRecognize(True)
+    text_rank_keywords = JClass("com.hankcs.hanlp.summary.TextRankKeyword")
 
 
     @classmethod
@@ -57,9 +59,13 @@ class NlpUtil(object):
 
 
     @classmethod
-    def text_rank(cls, text):
-        keywords = jieba.analyse.textrank(text, topK=5, 
-            withWeight=False, allowPOS=('ns', 'n', 'vn', 'v'))
+    def text_rank(cls, title, content, size=5):
+        print title, content
+        #keywords = summarization.keywords(title + " " + content).split('\n')[:5] 
+        keywords = HanLP.extractKeyword(title + " " + content, 5)
+        keywords = [w for w in keywords if w in title and len(w) >= 2]
+        #jieba.analyse.textrank(text, topK=5, 
+        #    withWeight=False, allowPOS=('ns', 'n', 'vn', 'v'))
         return keywords
 
 

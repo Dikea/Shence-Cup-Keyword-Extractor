@@ -14,19 +14,11 @@ class RuleUtil(object):
         if not (u"《" in text and u"》" in text):
             return text
 
-        new_tokens = []
-        uniq_s = ""
         for s in quote_pattern.findall(text):
-            s = s.replace(" ", "")
-            new_tokens.append(u"《" + " " + s + " " + u"》")
-            uniq_s += s + u"《" + u"》"
-        for token in text.split():
-            if token not in uniq_s:
-                new_tokens.append(token)
-        new_text = " ".join(new_tokens)
-        print ("new_text: %s" % new_text).encode("utf-8")
+            text = text.replace(s, " " + s.replace(" ", "") + " ")
+        print ("new_text: %s" % text).encode("utf-8")
 
-        return new_text 
+        return text 
 
 
     @classmethod
@@ -36,14 +28,6 @@ class RuleUtil(object):
                 keywords.append(token)
                 if once_flag:
                     return keywords
-        """
-        keywords_str = "".join(keywords)
-        for token in words_set:
-            if token not in keywords_str:
-                keywords.append(token)
-                if once_flag:
-                    break
-        """
         return keywords
 
 

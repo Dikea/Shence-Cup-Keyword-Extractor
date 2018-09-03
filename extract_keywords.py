@@ -54,18 +54,18 @@ class KeywordsModel(object):
 
     def extract_keywords(self, idx, title, content):
         debug_print("\n\nidx=%s, title=%s" % (idx, title))
-        if idx in self.id2keywords:
-            debug_print("train_answer: " + " ".join(self.id2keywords[idx]))
 
         ret_keywords = []
-        #title = RuleUtil.process_text(title) 
-        #content = RuleUtil.process_text(content)
+        title = RuleUtil.process_text(title) 
+        content = RuleUtil.process_text(content)
 
         quotes = NlpUtil.extract_quotes(title)
         names = NlpUtil.name_recognize(title) 
+        train_keywords = [w for w in title.split() if w in self.keywords_set]
 
-        debug_print("quotes:" + " ".join(quotes))
-        debug_print("names:" + " ".join(names))
+        debug_print("quotes: " + " ".join(quotes))
+        debug_print("names: " + " ".join(names))
+        debug_print("train_keywords: " + " ".join(train_keywords))
 
         ret_keywords = RuleUtil.add_to_keywords(title, 
             ret_keywords, quotes, once_flag=True)
@@ -77,6 +77,10 @@ class KeywordsModel(object):
         ret_keywords = RuleUtil.add_to_keywords(title,
             ret_keywords, names, once_flag=False)
         debug_print("after names, ret_keywords: " + " ".join(ret_keywords))
+
+        ret_keywords = RuleUtil.add_to_keywords(title, ret_keywords, 
+            train_keywords, once_flag=True)
+        debug_print("after add train_words, ret_keywords: " + " ".join(ret_keywords))
 
         tfidf_keywords = self.tfidf_inst.get_keywords(title, content)
         debug_print("tfidf_keywords: " + " ".join(tfidf_keywords))
@@ -97,7 +101,6 @@ def main():
 
     with codecs.open(config.tokenized_all_docs, "r", "utf-8") as rfd, \
         codecs.open(config.result_path, "w", "utf-8") as wfd:
-        cnt = 0
         wfd.write("id,label1,label2\n")
         docs = [s.replace("\n", "").split("\t", 2) 
             for s in rfd.read().split("&&&&")][:-1]
@@ -105,15 +108,25 @@ def main():
         raw_corpus = [title.split() + content.split() for _, title, content in docs]
 
         model = KeywordsModel(raw_corpus)
+        total_score = 0
         for idx, title, content in docs:
-            cnt += 1
-            if cnt % 1000 == 0:
-                print ("cnt=%d" % cnt)
             keywords = model.extract_keywords(idx, title, content)
+            # compute score
+            if idx in model.id2keywords:
+                standard_keywords = model.id2keywords[idx]
+                debug_print("train_answer: " + " ".join(standard_keywords))
+                score = 0
+                for word in keywords:
+                    if word in standard_keywords:
+                        score += 0.5
+                print ("CaseScore=%f" % score)
+                total_score += score
+
             answer = idx + "," + ",".join(keywords)
             if len(keywords) == 1:
                 answer += ","
             wfd.write(answer + "\n")
+        print ("FinalScore=%f" % total_score)
                 
     e_time = time.time()
     print ("RunTime=%.2f seconds." % (e_time - s_time))
