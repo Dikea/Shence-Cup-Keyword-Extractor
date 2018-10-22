@@ -1,6 +1,6 @@
 # ShenceCup.extract_keywords
 
-[神策杯](http://www.dcjingsai.com/common/cmpt/%E2%80%9C%E7%A5%9E%E7%AD%96%E6%9D%AF%E2%80%9D2018%E9%AB%98%E6%A0%A1%E7%AE%97%E6%B3%95%E5%A4%A7%E5%B8%88%E8%B5%9B_%E8%B5%9B%E4%BD%93%E4%B8%8E%E6%95%B0%E6%8D%AE.html)第五名解决方案
+[神策杯](http://www.dcjingsai.com/common/cmpt/%E2%80%9C%E7%A5%9E%E7%AD%96%E6%9D%AF%E2%80%9D2018%E9%AB%98%E6%A0%A1%E7%AE%97%E6%B3%95%E5%A4%A7%E5%B8%88%E8%B5%9B_%E8%B5%9B%E4%BD%93%E4%B8%8E%E6%95%B0%E6%8D%AE.html)第五名解决方案，数据没有传上来，大家运行可以有问题，但是可以阅读代码，作为参考。
 
 ## 1. 运行环境和依赖
 ```python2.7```
